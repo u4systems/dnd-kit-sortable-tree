@@ -66,6 +66,7 @@ export type Props = {
   indicator: boolean;
   disableSorting: boolean;
   hideCollapseButton: boolean;
+  hasExpandCollapseButton: boolean;
 };
 
 export const FolderRoot: React.FC<Props> = (props) => {

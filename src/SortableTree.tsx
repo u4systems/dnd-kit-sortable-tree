@@ -73,6 +73,7 @@ export type SortableTreeProps<
   sortableProps?: Omit<UseSortableArguments, 'id'>;
   keepGhostInPlace?: boolean;
   canRootHaveChildren?: boolean | ((dragItem: FlattenedItem<TData>) => boolean);
+  hasExpandCollapseButton?: boolean
 };
 const defaultPointerSensorOptions: PointerSensorOptions = {
   activationConstraint: {
@@ -119,11 +120,13 @@ export function SortableTree<
   sortableProps,
   keepGhostInPlace,
   canRootHaveChildren,
+  hasExpandCollapseButton,
   ...rest
 }: SortableTreeProps<TreeItemData, TElement>) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
+  const [isCollapseAll, setIsCollapseAll] = useState(true);
   const [currentPosition, setCurrentPosition] = useState<{
     parentId: UniqueIdentifier | null;
     overId: UniqueIdentifier;
@@ -237,6 +240,19 @@ export function SortableTree<
   const strategyCallback = useCallback(() => {
     return !!projected;
   }, [projected]);
+
+  function collapseAll() {
+    for (let itemCount = 0; itemCount < flattenedItems.length; itemCount++) {
+      const itemId = flattenedItems[itemCount].id;
+      handleCollapse(String(itemId))
+    }
+  }
+
+  const onClickHandleCollapseExpandAll = () => {
+    setIsCollapseAll(!isCollapseAll);
+    collapseAll();
+  }
+
   return (
     <DndContext
       accessibility={{ announcements }}
@@ -251,6 +267,13 @@ export function SortableTree<
       onDragCancel={disableSorting ? undefined : handleDragCancel}
       {...dndContextProps}
     >
+      {hasExpandCollapseButton ? 
+      (
+        <button onClick={onClickHandleCollapseExpandAll}>
+          {isCollapseAll ? 'Expand' : 'Collapse'} All
+        </button>
+      ) 
+      : ''}
       <SortableContext
         items={sortedIds}
         strategy={

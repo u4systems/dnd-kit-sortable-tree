@@ -17,4 +17,5 @@ Folder.args = {
   indicator: false,
   indentationWidth: 10,
   hideCollapseButton: false,
+  hasExpandCollapseButton: false,
 };
