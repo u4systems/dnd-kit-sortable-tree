@@ -1,10 +1,9 @@
 {
   // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
-  "include": ["src", "types", "stories"],
+  "include": ["src", "types", "stories", "stories"],
   "compilerOptions": {
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "rootDir": "./src",
     "importHelpers": true,
     // output .d.ts declaration files for consumers
     "declaration": true,
