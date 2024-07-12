@@ -73,7 +73,8 @@ export type SortableTreeProps<
   sortableProps?: Omit<UseSortableArguments, 'id'>;
   keepGhostInPlace?: boolean;
   canRootHaveChildren?: boolean | ((dragItem: FlattenedItem<TData>) => boolean);
-  hasExpandCollapseButton?: boolean
+  hasExpandCollapseButton?: boolean;
+  collapsedOnLoad?: boolean;
 };
 const defaultPointerSensorOptions: PointerSensorOptions = {
   activationConstraint: {
@@ -121,6 +122,7 @@ export function SortableTree<
   keepGhostInPlace,
   canRootHaveChildren,
   hasExpandCollapseButton,
+  collapsedOnLoad,
   ...rest
 }: SortableTreeProps<TreeItemData, TElement>) {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -187,6 +189,21 @@ export function SortableTree<
     };
   }, [flattenedItems, offsetLeft]);
 
+  useEffect(()=>{
+    let isAllExpanded = false;
+    if (collapsedOnLoad) {
+      for (let itemCount = 0; itemCount < flattenedItems.length; itemCount++) {
+        if (!flattenedItems[itemCount].collapsed) {
+          isAllExpanded = true;
+        }
+      }
+
+      if (isAllExpanded) {
+        collapseExpandAll();
+      }
+    }
+  }, [])
+
   const itemsRef = useRef(items);
   itemsRef.current = items;
   const handleRemove = useCallback(
@@ -241,7 +258,7 @@ export function SortableTree<
     return !!projected;
   }, [projected]);
 
-  function collapseAll() {
+  function collapseExpandAll() {
     for (let itemCount = 0; itemCount < flattenedItems.length; itemCount++) {
       const itemId = flattenedItems[itemCount].id;
       handleCollapse(String(itemId))
@@ -250,7 +267,7 @@ export function SortableTree<
 
   const onClickHandleCollapseExpandAll = () => {
     setIsCollapseAll(!isCollapseAll);
-    collapseAll();
+    collapseExpandAll();
   }
 
   return (

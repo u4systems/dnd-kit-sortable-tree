@@ -18,4 +18,5 @@ Folder.args = {
   indentationWidth: 10,
   hideCollapseButton: false,
   hasExpandCollapseButton: false,
+  collapsedOnLoad: false,
 };
